@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
 import java.net.URL;
+import java.nio.DoubleBuffer;
 import java.nio.charset.Charset;
 import java.util.Scanner;
 
@@ -53,29 +54,43 @@ public class NbpConnection {
         String date;
         Scanner odczyt = new Scanner(System.in);
         date = odczyt.nextLine();
-
-        return date;
+    return date;
     }
+    private static Double getJsonObject(JSONObject json) {
+
+        JSONArray rates = json.getJSONArray("rates");
+        System.out.println(rates.toString());
+
+        double sr = 0, sum=0;
+        int i=0;
+        for(i=0; i<rates.length(); i++){
+            JSONObject value = rates.getJSONObject(i);
+            double id = value.getDouble("mid");
+            sum += id;
+        }
+        sr = sum/i;
+        System.out.print("srednia kursu wynosi: " + round(sr, 4) );
+    return sr;
+    }
+
 
 
     public static void main(String[] args) throws IOException, InvalidDataException, InvalidDataException {
 
         //System.out.println("http://api.nbp.pl/api/exchangerates/tables/a/"+ dateOf() + "/" + dateTo() + "/?format=json");
-        JSONObject json = readJsonFromUrl("http://api.nbp.pl/api/exchangerates/rates/a/usd/2015-01-01/2015-01-10");
+        JSONObject json = readJsonFromUrl("http://api.nbp.pl/api/exchangerates/rates/a/" + getKurs() + "/" + dateOf() + "/" + dateTo() + "/?format=json");
                 //+ getKurs() + "/" + dateOf() + "/" + dateTo() + "/?format=json");
-        JSONArray rates = json.getJSONArray("rates");
-        //JSONArray countries = (JSONArray)json.get("mid");
-        //JSONArray arr = json.getJSONArray("mid");
-        //JSONArray age = json.getJSONArray("mid");
-                //+ getKurs() + "/" + dateOf() + "/" + dateTo() + "/?format=json");
+
+        getJsonObject(json);
+
+
+        }
+                //
         //http://api.nbp.pl/api/exchangerates/rates/{table}/{code}/{startDate}/{endDate}/
         // http:api.nbp.pl/api/exchangerates/rates/a/" + KURS_WALUTY + "/" + /{endDate}/  2012-01-01
        // throw new InvalidDataException();
-      System.out.println(json.toString());
-        System.out.println(rates.toString());
-        //System.out.println(arr);
+        //System.out.println(id);
         //System.out.println(getKurs());
         //System.out.println(dateOf());
         //System.out.println(dateTo());
     }
-}
